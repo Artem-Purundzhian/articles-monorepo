@@ -26,8 +26,8 @@ export class ArticleController {
   }
 
   @Get()
-  getArticles(@GetUser('id') userId: number) {
-    return this.articleService.getArticles(userId);
+  getArticles() {
+    return this.articleService.getArticles();
   }
 
   @Get(':id')
