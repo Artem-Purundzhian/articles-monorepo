@@ -20,7 +20,6 @@ model User {
 
   firstName String?
   lastName  String?
-  articles  Article[]
 
   @@map("users")
 }
@@ -37,9 +36,6 @@ model Article {
   link        String
   author      String?
   mediaLink   String?
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
 
   @@map("articles")
 }
