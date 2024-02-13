@@ -7,8 +7,14 @@ export class ArticleService {
   constructor(private prisma: PrismaService) {}
 
   async createArticle(userId: number, dto: CreateArticleDto) {
-    const article = await this.prisma.article.create({
-      data: {
+    const article = await this.prisma.article.upsert({
+      where: {
+        link: dto.link,
+      },
+      create: {
+        ...dto,
+      },
+      update: {
         ...dto,
       },
     });
