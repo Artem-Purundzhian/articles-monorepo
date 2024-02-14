@@ -35,7 +35,7 @@ export class ArticleController {
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) articleId: number,
   ) {
-    return this.articleService.getArticleById(userId, articleId);
+    return this.articleService.getArticleById(articleId);
   }
 
   @Patch(':id')

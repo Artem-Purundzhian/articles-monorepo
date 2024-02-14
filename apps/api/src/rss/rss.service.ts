@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Article } from '@prisma/client';
-import { ArticleService } from 'src/article/article.service';
-import { GetUser } from 'src/auth/decorator';
+import { CreateArticleDto } from 'src/article/dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Parser = require('rss-parser');
@@ -11,15 +11,15 @@ const parser = new Parser();
 
 @Injectable()
 export class RssService {
-  constructor(private articleService: ArticleService) {}
+  constructor(private prisma: PrismaService) {}
 
   private readonly logger = new Logger(RssService.name);
 
-  async onModuleInit(@GetUser('id') userId: number) {
-    await this.fetchAllFeeds(userId);
+  async onModuleInit() {
+    await this.fetchAllFeeds();
   }
 
-  async fetchAllFeeds(userId: number) {
+  async fetchAllFeeds() {
     const urls = [
       'http://feeds.feedburner.com/TechCrunch',
       'https://www.theverge.com/rss/index.xml',
@@ -32,7 +32,7 @@ export class RssService {
 
       allFeeds.forEach((feed) =>
         feed.items.forEach((article: Article) => {
-          this.articleService.createArticle(userId, {
+          this.createArticle({
             title: article.title,
             link: article.link,
           });
@@ -45,9 +45,24 @@ export class RssService {
     }
   }
 
+  async createArticle(dto: CreateArticleDto) {
+    const article = await this.prisma.article.upsert({
+      where: {
+        link: dto.link,
+      },
+      create: {
+        ...dto,
+      },
+      update: {},
+    });
+
+    console.log(article);
+    return article;
+  }
+
   @Cron(CronExpression.EVERY_10_SECONDS)
-  async handleInterval(@GetUser('id') userId: number) {
+  async handleInterval() {
     this.logger.debug('Called every 10 seconds');
-    await this.fetchAllFeeds(userId);
+    await this.fetchAllFeeds();
   }
 }
