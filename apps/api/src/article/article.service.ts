@@ -7,6 +7,8 @@ export class ArticleService {
   constructor(private prisma: PrismaService) {}
 
   async createArticle(userId: number, dto: CreateArticleDto) {
+    if (!userId) throw new ForbiddenException('Access to resources denied');
+
     const article = await this.prisma.article.upsert({
       where: {
         link: dto.link,
@@ -14,9 +16,7 @@ export class ArticleService {
       create: {
         ...dto,
       },
-      update: {
-        ...dto,
-      },
+      update: {},
     });
 
     return article;
@@ -28,7 +28,7 @@ export class ArticleService {
     return articles;
   }
 
-  async getArticleById(userId: number, articleId: number) {
+  async getArticleById(articleId: number) {
     const article = await this.prisma.article.findUnique({
       where: {
         id: articleId,
@@ -43,16 +43,7 @@ export class ArticleService {
     articleId: number,
     dto: EditArticleDto,
   ) {
-    // get the article by id
-    const article = await this.prisma.article.findUnique({
-      where: {
-        id: articleId,
-      },
-    });
-
-    // check if user owns the article
-    // if (!article || article.userId !== userId)
-    throw new ForbiddenException('Access to resources denied');
+    if (!userId) throw new ForbiddenException('Access to resources denied');
 
     return this.prisma.article.update({
       where: {
@@ -65,15 +56,7 @@ export class ArticleService {
   }
 
   async deleteArticleById(userId: number, articleId: number) {
-    const article = await this.prisma.article.findUnique({
-      where: {
-        id: articleId,
-      },
-    });
-
-    // check if user owns the article
-    // if (!article || article.userId !== userId)
-    // throw new ForbiddenException('Access to resources denied');
+    if (!userId) throw new ForbiddenException('Access to resources denied');
 
     await this.prisma.article.delete({
       where: {

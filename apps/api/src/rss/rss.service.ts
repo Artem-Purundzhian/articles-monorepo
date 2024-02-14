@@ -39,15 +39,15 @@ export class RssService {
         }),
       );
     } catch (error) {
-      // Handle errors if any of the promises reject
       this.logger.error(`Error fetching/parsing feeds`, error);
       console.error('Error parsing feeds:', error);
       throw error;
     }
   }
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
-  async handleInterval() {
-    this.logger.debug('Called every 5 seconds');
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async handleInterval(@GetUser('id') userId: number) {
+    this.logger.debug('Called every 10 seconds');
+    await this.fetchAllFeeds(userId);
   }
 }
