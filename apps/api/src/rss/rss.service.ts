@@ -56,13 +56,12 @@ export class RssService {
       update: {},
     });
 
-    console.log(article);
     return article;
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
-  async handleInterval() {
-    this.logger.debug('Called every 10 seconds');
-    await this.fetchAllFeeds();
-  }
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+  // async handleInterval() {
+  //   this.logger.debug('Called every 10 seconds');
+  //   await this.fetchAllFeeds();
+  // }
 }

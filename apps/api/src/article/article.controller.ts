@@ -16,11 +16,11 @@ import { ArticleService } from './article.service';
 import { GetUser } from '../auth/decorator';
 import { CreateArticleDto, EditArticleDto } from './dto';
 
-@UseGuards(JwtGuard)
 @Controller('articles')
 export class ArticleController {
   constructor(private articleService: ArticleService) {}
   @Post()
+  @UseGuards(JwtGuard)
   createArticle(@GetUser('id') userId: number, @Body() dto: CreateArticleDto) {
     return this.articleService.createArticle(userId, dto);
   }
