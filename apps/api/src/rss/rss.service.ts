@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Article } from '@prisma/client';
+import { parse } from 'date-fns';
 import { CreateArticleDto } from 'src/article/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -21,8 +21,7 @@ export class RssService {
 
   async fetchAllFeeds() {
     const urls = [
-      'http://feeds.feedburner.com/TechCrunch',
-      'https://www.theverge.com/rss/index.xml',
+      'https://techcrunch.com/feed/',
       'https://www.cnet.com/rss/news/',
     ];
 
@@ -31,10 +30,21 @@ export class RssService {
       const allFeeds = await Promise.all(fetchPromises);
 
       allFeeds.forEach((feed) =>
-        feed.items.forEach((article: Article) => {
+        feed.items.forEach((article: any) => {
           this.createArticle({
+            feedTitle: feed.title,
             title: article.title,
             link: article.link,
+            published: parse(
+              article.pubDate,
+              'EEE, dd MMM yyyy HH:mm:ss XXXX',
+              new Date(),
+            ),
+            mediaLink: article.media,
+            author: article.author || article.creator,
+            category: article.category,
+            description: `${article.description || article.content}`,
+            content: `${article.content || article.description}`,
           });
         }),
       );

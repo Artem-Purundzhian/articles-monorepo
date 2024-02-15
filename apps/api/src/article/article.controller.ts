@@ -38,6 +38,7 @@ export class ArticleController {
     return this.articleService.getArticleById(articleId);
   }
 
+  @UseGuards(JwtGuard)
   @Patch(':id')
   editArticleById(
     @GetUser('id') userId: number,
@@ -47,6 +48,7 @@ export class ArticleController {
     return this.articleService.editArticleById(userId, articleId, dto);
   }
 
+  @UseGuards(JwtGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   deleteArticleById(
