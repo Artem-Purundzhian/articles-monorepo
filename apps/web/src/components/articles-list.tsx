@@ -12,6 +12,8 @@ export interface Article {
   category: string;
   title: string;
   description: string;
+  content: string;
+  feedTitle: string;
   link: string;
   author: string;
   mediaLink: string;
@@ -22,6 +24,7 @@ async function getData() {
     headers: {
       'Content-Type': 'application/json',
     },
+    cache: 'no-store',
   });
 
   if (!res.ok) {
@@ -36,7 +39,7 @@ const ArticlesList: FC = async () => {
 
   return (
     <div className="flex flex-col gap-2 pt-0">
-      {articles.map((article: any) => (
+      {articles.map((article) => (
         <button
           key={article.id}
           className={cn(
@@ -44,24 +47,26 @@ const ArticlesList: FC = async () => {
           )}
         >
           <div className="flex w-full flex-col gap-1">
-            <div className="flex items-center">
+            <div className="flex items-center pb-2">
+              <Badge className="text-xs">{article.feedTitle}</Badge>
+            </div>
+            <div className="flex items-center gap-1">
               <div className="flex items-center gap-2">
                 <div className="font-semibold">{article.title}</div>
               </div>
-              <div className={cn('ml-auto text-xs text-foreground')}>
-                {formatDistanceToNow(new Date(article.createdAt), {
-                  addSuffix: true,
-                })}
-              </div>
             </div>
-            <div className="text-xs font-medium">{article.author}</div>
+            <div className="text-xs font-medium opacity-75">
+              {article.author}
+            </div>
           </div>
-          <div className="line-clamp-2 text-xs text-muted-foreground">
+          <div className="line-clamp-2 text-xs text-muted-foreground" dangerouslySetInnerHTML={{ __html: article.description }}>
             {/* {article.description.substring(0, 300)} */}
-            {article.description}
+            {/* {article.description} */}
           </div>
-          <div className="flex items-center gap-2">
-            <Badge>Badge</Badge>
+          <div className="ml-auto text-xs text-foreground whitespace-nowrap">
+            {formatDistanceToNow(new Date(article.published), {
+              addSuffix: true,
+            })}
           </div>
         </button>
       ))}
