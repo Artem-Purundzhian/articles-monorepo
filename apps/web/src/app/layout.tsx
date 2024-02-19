@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { Button } from '@/components/ui/button';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,23 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + ' dark p-8'}>
-        <header className="mx-auto container px-4 max-w-2xl h-37.5px flex items-center justify-between -mt-2 mb-4">
+        <header className="mx-auto container px-4 max-w-2xl h-37.5px flex items-center justify-between mb-4">
           <h1 className="">Articles app</h1>
           <div className="flex gap-x-4">
-            <a
-              href="/blog"
-              target="_self"
-              className="hover:underline hover:underline-offset-4 hover:transition-transform"
-            >
-              log in
-            </a>
-            <a
-              href="/music"
-              target="_self"
-              className="hover:underline hover:underline-offset-4 hover:transition-transform"
-            >
-              log out
-            </a>
+            <Button size="sm">Log in</Button>
+            <Button variant="secondary" size="sm">
+              Sign up
+            </Button>
           </div>
         </header>
         {children}

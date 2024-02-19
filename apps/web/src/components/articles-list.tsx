@@ -3,6 +3,8 @@ import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
 
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
+import { buttonVariants } from './ui/button';
+import { Link2 } from 'lucide-react';
 
 export interface Article {
   id: number;
@@ -59,14 +61,26 @@ const ArticlesList: FC = async () => {
               {article.author}
             </div>
           </div>
-          <div className="line-clamp-2 text-xs text-muted-foreground" dangerouslySetInnerHTML={{ __html: article.description }}>
-            {/* {article.description.substring(0, 300)} */}
-            {/* {article.description} */}
-          </div>
-          <div className="ml-auto text-xs text-foreground whitespace-nowrap">
-            {formatDistanceToNow(new Date(article.published), {
-              addSuffix: true,
-            })}
+          <div
+            className="line-clamp-2 text-xs text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: article.description }}
+          ></div>
+          <div className="flex items-center justify-between w-full mt-2">
+            <a
+              target="_blank"
+              href={article.link}
+              className={cn(
+                buttonVariants({ variant: 'ghost', size: 'icon' }),
+                'w-6 h-6'
+              )}
+            >
+              <Link2 className="w-4 h-4" />
+            </a>
+            <div className="text-xs text-foreground whitespace-nowrap">
+              {formatDistanceToNow(new Date(article.published), {
+                addSuffix: true,
+              })}
+            </div>
           </div>
         </button>
       ))}
