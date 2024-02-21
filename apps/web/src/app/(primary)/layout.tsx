@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
-import { Button, buttonVariants } from '@/components/ui/button';
+import '../globals.css';
+import { buttonVariants } from '@/components/ui/button';
 import Link from 'next/link';
 import { Toaster } from '@/components/ui/toaster';
 
