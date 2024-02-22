@@ -45,7 +45,7 @@ const Page = () => {
 
       if (response.ok) {
         setCookie('access_token', res.access_token);
-        push('/');
+        push('/admin');
       } else {
         console.log(res);
         if (res.statusCode === 403) {
