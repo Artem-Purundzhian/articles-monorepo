@@ -5,21 +5,7 @@ import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import { buttonVariants } from './ui/button';
 import { Link2 } from 'lucide-react';
-
-export interface Article {
-  id: number;
-  createdAt: Date;
-  updatedAt: Date;
-  published: Date;
-  category: string;
-  title: string;
-  description: string;
-  content: string;
-  feedTitle: string;
-  link: string;
-  author: string;
-  mediaLink: string;
-}
+import { Article } from '@/lib/types/article';
 
 async function getData() {
   const res = await fetch('http://localhost:3333/articles', {

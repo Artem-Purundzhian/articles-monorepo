@@ -19,8 +19,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark bg-background">
-      <body className={inter.className + ' p-8'}>
-        <header className="mx-auto container px-4 max-w-2xl h-37.5px flex items-center justify-between mb-4">
+      <body className={inter.className}>
+        <header className="mx-auto pt-8 container px-4 max-w-2xl h-37.5px flex items-center justify-between mb-4">
           <h1 className="">
             <Link href="/">Article app</Link>
           </h1>
