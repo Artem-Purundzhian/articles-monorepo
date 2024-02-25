@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import '../globals.css';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Toaster } from '@/components/ui/toaster';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import LogoutButton from '@/components/logout-button';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -60,9 +60,7 @@ export default async function RootLayout({
             <Link href="/">Article app</Link>
           </h1>
           <div className="flex gap-x-4">
-            <Button variant="secondary" size="sm">
-              Log out
-            </Button>
+            <LogoutButton />
           </div>
         </header>
         {children}
