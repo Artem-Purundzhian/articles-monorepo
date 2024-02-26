@@ -45,7 +45,7 @@ export class ArticleService {
   ) {
     if (!userId) throw new ForbiddenException('Access to resources denied');
 
-    return this.prisma.article.update({
+    const article = await this.prisma.article.update({
       where: {
         id: articleId,
       },
@@ -53,6 +53,8 @@ export class ArticleService {
         ...dto,
       },
     });
+
+    return article;
   }
 
   async deleteArticleById(userId: number, articleId: number) {

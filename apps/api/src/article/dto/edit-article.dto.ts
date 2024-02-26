@@ -14,4 +14,12 @@ export class EditArticleDto {
   @IsOptional()
   @IsNotEmpty()
   link?: string;
+
+  @IsString()
+  @IsOptional()
+  published?: Date;
+
+  @IsString()
+  @IsOptional()
+  author?: string;
 }

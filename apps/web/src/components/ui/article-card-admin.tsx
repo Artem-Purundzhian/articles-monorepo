@@ -9,6 +9,7 @@ import { Button, buttonVariants } from "./button";
 import { FC } from "react";
 import { toast } from "./use-toast";
 import { useRouter } from "next/navigation";
+import EditArticleModal from "../edit-article-modal";
 
 interface cardProps {
   article: Article;
@@ -98,9 +99,7 @@ const ArticleCardAdmin: FC<cardProps> = ({ article, token }) => {
           <Button onClick={deleteArticle} variant="destructive" size="sm">
             <Trash2Icon className="h-4 w-4" />
           </Button>
-          <Button variant="secondary" size="sm">
-            Edit
-          </Button>
+          <EditArticleModal article={article} token={token} />
         </div>
       </div>
     </div>
