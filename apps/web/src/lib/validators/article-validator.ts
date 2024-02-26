@@ -1,9 +1,12 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const ArticleValidator = z.object({
   category: z.string().optional(),
   title: z.string().min(2, {
     message: "Tittle can't be empty",
+  }),
+  link: z.string().min(2, {
+    message: "Link can't be empty",
   }),
   description: z.string().min(2, {
     message: "Description can't be empty",
