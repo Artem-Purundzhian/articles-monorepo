@@ -1,6 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateArticleDto, EditArticleDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { Article } from '@prisma/client';
 
 @Injectable()
 export class ArticleService {
@@ -22,8 +23,41 @@ export class ArticleService {
     return article;
   }
 
-  async getArticles() {
-    const articles = await this.prisma.article.findMany();
+  async getArticles(query: string, page: number = 1) {
+    let articles: Article[];
+    if (query) {
+      articles = await this.prisma.article.findMany({
+        skip: (page - 1) * 3,
+        take: 3,
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              description: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              author: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      articles = await this.prisma.article.findMany({
+        skip: (page - 1) * 3,
+        take: 3,
+      });
+    }
 
     return articles;
   }

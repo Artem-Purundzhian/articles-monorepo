@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   Get,
   HttpCode,
@@ -9,6 +10,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard';
@@ -26,8 +28,11 @@ export class ArticleController {
   }
 
   @Get()
-  getArticles() {
-    return this.articleService.getArticles();
+  getArticles(
+    @Query('query', new DefaultValuePipe('')) query: string,
+    @Query('page', new ParseIntPipe({ optional: true })) page: number,
+  ) {
+    return this.articleService.getArticles(query, page);
   }
 
   @Get(':id')
