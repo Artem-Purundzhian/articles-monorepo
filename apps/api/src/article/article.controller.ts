@@ -35,6 +35,11 @@ export class ArticleController {
     return this.articleService.getArticles(query, page);
   }
 
+  @Get('count')
+  getArticleCount(@Query('query', new DefaultValuePipe('')) query: string) {
+    return this.articleService.getArticleCount(query);
+  }
+
   @Get(':id')
   getArticleById(
     @GetUser('id') userId: number,

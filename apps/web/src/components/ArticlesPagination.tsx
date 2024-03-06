@@ -28,7 +28,6 @@ export default function ArtcilesPagination({
   };
 
   const allPages = generatePagination(currentPage, totalPages);
-
   return (
     <div className="py-4">
       <Pagination>
@@ -36,7 +35,9 @@ export default function ArtcilesPagination({
           <PaginationItem>
             <PaginationPrevious
               href={createPageURL(currentPage - 1)}
-              className={currentPage <= 1 ? "hidden" : ""}
+              className={
+                currentPage <= 1 ? "invisible pointer-events-none" : ""
+              }
             />
           </PaginationItem>
           {allPages.map((page, index) => {
@@ -62,7 +63,9 @@ export default function ArtcilesPagination({
           <PaginationItem>
             <PaginationNext
               href={createPageURL(currentPage + 1)}
-              className={currentPage >= totalPages ? "hidden" : ""}
+              className={
+                currentPage >= totalPages ? "invisible pointer-events-none" : ""
+              }
             />
           </PaginationItem>
         </PaginationContent>

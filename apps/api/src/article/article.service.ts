@@ -51,12 +51,52 @@ export class ArticleService {
             },
           ],
         },
+        orderBy: {
+          published: 'desc',
+        },
       });
     } else {
       articles = await this.prisma.article.findMany({
         skip: (page - 1) * 3,
         take: 3,
+        orderBy: {
+          published: 'desc',
+        },
       });
+    }
+
+    return articles;
+  }
+
+  async getArticleCount(query: string) {
+    let articles: number;
+    if (query) {
+      articles = await this.prisma.article.count({
+        where: {
+          OR: [
+            {
+              title: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              description: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+            {
+              author: {
+                contains: query,
+                mode: 'insensitive',
+              },
+            },
+          ],
+        },
+      });
+    } else {
+      articles = await this.prisma.article.count();
     }
 
     return articles;
