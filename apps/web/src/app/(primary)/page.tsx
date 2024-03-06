@@ -1,6 +1,7 @@
 import ArticlesList from "@/components/articles-list";
+import { getArticlesPages } from "@/lib/articles";
 
-export default function Page({
+export default async function Page({
   searchParams,
 }: {
   searchParams?: {
@@ -11,9 +12,15 @@ export default function Page({
   const query = searchParams?.query || "";
   const currentPage = Number(searchParams?.page) || 1;
 
+  const totalPages = await getArticlesPages(query);
+
   return (
     <main className="mx-auto max-w-2xl container px-4">
-      <ArticlesList query={query} currentPage={currentPage} />
+      <ArticlesList
+        query={query}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </main>
   );
 }
