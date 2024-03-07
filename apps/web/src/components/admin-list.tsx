@@ -3,24 +3,17 @@ import { Article } from "@/lib/types/article";
 import ArticleCardAdmin from "./ui/article-card-admin";
 import { cookies } from "next/headers";
 import Search from "./search";
+import { getArticles, getArticlesPages } from "@/lib/articles";
+import ArtcilesPagination from "./ArticlesPagination";
 
-async function getData() {
-  const res = await fetch("http://localhost:3333/articles", {
-    headers: {
-      "Content-Type": "application/json",
-    },
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch data");
-  }
-
-  return res.json();
+interface AdminListProps {
+  query: string;
+  currentPage: number;
 }
 
-const AdminList: FC = async () => {
-  const articles: Article[] = await getData();
+const AdminList: FC<AdminListProps> = async ({ query, currentPage }) => {
+  const totalPages = Math.ceil((await getArticlesPages(query)) / 3);
+  const articles: Article[] = await getArticles(query, currentPage);
 
   const cookieStore = cookies();
   const token = cookieStore.get("access_token");
@@ -37,6 +30,7 @@ const AdminList: FC = async () => {
           />
         ))}
       </div>
+      <ArtcilesPagination totalPages={totalPages} />
     </>
   );
 };

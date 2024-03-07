@@ -4,8 +4,8 @@ import "../globals.css";
 import Link from "next/link";
 import { Toaster } from "@/components/ui/toaster";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import LogoutButton from "@/components/logout-button";
+import { checkToken } from "@/lib/token-check";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,34 +22,7 @@ export default async function RootLayout({
   const cookieStore = cookies();
   const token = cookieStore.get("access_token");
 
-  if (token?.value) {
-    try {
-      const response = await fetch("http://localhost:3333/users/me", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token.value}`,
-        },
-      });
-
-      const res = await response.json();
-
-      if (response.ok) {
-        if (!res.email) {
-          redirect("/sign-in");
-        }
-      } else {
-        console.log(res);
-        redirect("/sign-in");
-      }
-    } catch (err) {
-      console.log(err);
-      redirect("/sign-in");
-    }
-  } else {
-    redirect("/sign-in");
-  }
-
+  await checkToken(token?.value);
   return (
     <html lang="en" className="dark bg-background">
       <body className={inter.className}>

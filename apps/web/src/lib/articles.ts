@@ -27,7 +27,6 @@ export async function getArticles(query: string, currentPage: number) {
 
 export async function getArticlesPages(query: string) {
   noStore();
-  console.log("count numbers");
   try {
     const res = await fetch(
       `http://localhost:3333/articles/count/?query=${query}`,
