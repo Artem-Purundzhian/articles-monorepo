@@ -7,7 +7,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: rootName
       MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: article_db
       MONGO_INITDB_ROOT_ROLE: readWrite
     command: mongod --bind_ip_all
     ports:
