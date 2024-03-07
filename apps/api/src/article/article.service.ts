@@ -1,143 +1,87 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { CreateArticleDto, EditArticleDto } from './dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { Article } from '@prisma/client';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Article } from 'src/schemas/article.schema';
 
 @Injectable()
 export class ArticleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Article.name) private articleModel: Model<Article>,
+  ) {}
 
-  async createArticle(userId: number, dto: CreateArticleDto) {
+  async createArticle(userId: string, dto: CreateArticleDto) {
     if (!userId) throw new ForbiddenException('Access to resources denied');
 
-    const article = await this.prisma.article.upsert({
-      where: {
-        link: dto.link,
-      },
-      create: {
-        ...dto,
-      },
-      update: {},
-    });
+    const existingArticle = await this.articleModel.findOne({ link: dto.link });
 
-    return article;
+    if (existingArticle) {
+      return existingArticle;
+    }
+
+    const article = new this.articleModel({ ...dto, userId });
+    return article.save();
   }
 
-  async getArticles(query: string, page: number = 1) {
-    let articles: Article[];
-    if (query) {
-      articles = await this.prisma.article.findMany({
-        skip: (page - 1) * 3,
-        take: 3,
-        where: {
-          OR: [
-            {
-              title: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              description: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              author: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
+  async getArticles(query: string, page: number = 1, limit: number = 3) {
+    const skip = (page - 1) * limit;
+    const filter = query
+      ? {
+          $or: [
+            { title: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+            { author: { $regex: query, $options: 'i' } },
           ],
-        },
-        orderBy: {
-          published: 'desc',
-        },
-      });
-    } else {
-      articles = await this.prisma.article.findMany({
-        skip: (page - 1) * 3,
-        take: 3,
-        orderBy: {
-          published: 'desc',
-        },
-      });
-    }
+        }
+      : {};
+
+    const articles = await this.articleModel
+      .find(filter)
+      .sort({ published: -1 })
+      .skip(skip)
+      .limit(limit);
 
     return articles;
   }
 
   async getArticleCount(query: string) {
-    let articles: number;
-    if (query) {
-      articles = await this.prisma.article.count({
-        where: {
-          OR: [
-            {
-              title: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              description: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              author: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
+    const filter = query
+      ? {
+          $or: [
+            { title: { $regex: query, $options: 'i' } },
+            { description: { $regex: query, $options: 'i' } },
+            { author: { $regex: query, $options: 'i' } },
           ],
-        },
-      });
-    } else {
-      articles = await this.prisma.article.count();
-    }
+        }
+      : {};
 
-    return articles;
+    const count = await this.articleModel.countDocuments(filter);
+    return count;
   }
 
   async getArticleById(articleId: number) {
-    const article = await this.prisma.article.findUnique({
-      where: {
-        id: articleId,
-      },
-    });
+    const article = await this.articleModel.findById(articleId);
 
     return article;
   }
 
   async editArticleById(
-    userId: number,
-    articleId: number,
+    userId: string,
+    articleId: string,
     dto: EditArticleDto,
   ) {
     if (!userId) throw new ForbiddenException('Access to resources denied');
 
-    const article = await this.prisma.article.update({
-      where: {
-        id: articleId,
-      },
-      data: {
-        ...dto,
-      },
+    const article = await this.articleModel.findByIdAndUpdate(articleId, dto, {
+      new: true,
     });
 
     return article;
   }
 
-  async deleteArticleById(userId: number, articleId: number) {
+  async deleteArticleById(userId: string, articleId: string) {
     if (!userId) throw new ForbiddenException('Access to resources denied');
 
-    await this.prisma.article.delete({
-      where: {
-        id: articleId,
-      },
-    });
+    await this.articleModel.findByIdAndDelete(articleId);
   }
 }

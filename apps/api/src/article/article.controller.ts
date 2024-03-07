@@ -23,7 +23,7 @@ export class ArticleController {
   constructor(private articleService: ArticleService) {}
   @Post()
   @UseGuards(JwtGuard)
-  createArticle(@GetUser('id') userId: number, @Body() dto: CreateArticleDto) {
+  createArticle(@GetUser('id') userId: string, @Body() dto: CreateArticleDto) {
     return this.articleService.createArticle(userId, dto);
   }
 
@@ -51,8 +51,8 @@ export class ArticleController {
   @UseGuards(JwtGuard)
   @Patch(':id')
   editArticleById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) articleId: number,
+    @GetUser('id') userId: string,
+    @Param('id') articleId: string,
     @Body() dto: EditArticleDto,
   ) {
     return this.articleService.editArticleById(userId, articleId, dto);
@@ -62,8 +62,8 @@ export class ArticleController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   deleteArticleById(
-    @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) articleId: number,
+    @GetUser('id') userId: string,
+    @Param('id') articleId: string,
   ) {
     return this.articleService.deleteArticleById(userId, articleId);
   }

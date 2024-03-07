@@ -13,7 +13,7 @@ interface cardProps {
 const ArticleCard: FC<cardProps> = ({ article }) => {
   return (
     <button
-      key={article.id}
+      key={article._id}
       className={cn(
         "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-muted",
       )}

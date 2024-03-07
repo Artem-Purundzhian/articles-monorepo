@@ -25,7 +25,7 @@ const AdminList: FC<AdminListProps> = async ({ query, currentPage }) => {
         {articles.map((article: Article) => (
           <ArticleCardAdmin
             token={token?.value}
-            key={article.id}
+            key={article._id}
             article={article}
           />
         ))}

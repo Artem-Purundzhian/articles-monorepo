@@ -20,10 +20,9 @@ const ArticleCardAdmin: FC<cardProps> = ({ article, token }) => {
   const router = useRouter();
 
   async function deleteArticle() {
-    console.log("should get deleted");
     try {
       const response = await fetch(
-        `http://localhost:3333/articles/${article.id}`,
+        `http://localhost:3333/articles/${article._id}`,
         {
           method: "DELETE",
           headers: {
@@ -60,7 +59,7 @@ const ArticleCardAdmin: FC<cardProps> = ({ article, token }) => {
 
   return (
     <div
-      key={article.id}
+      key={article._id}
       className={cn(
         "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all",
       )}

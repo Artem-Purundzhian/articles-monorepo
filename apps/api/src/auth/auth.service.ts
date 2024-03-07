@@ -1,15 +1,17 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from 'src/schemas/user.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    @InjectModel(User.name) private userModel: Model<User>,
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
@@ -19,14 +21,12 @@ export class AuthService {
     const hash = await argon.hash(dto.password);
     //save the new user in the db
     try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: dto.email,
-          hash,
-        },
+      const user = await this.userModel.create({
+        email: dto.email,
+        hash,
       });
 
-      return this.signToken(user.id, user.email);
+      return this.signToken(user._id.toString(), user.email);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -39,11 +39,7 @@ export class AuthService {
 
   async signin(dto: AuthDto) {
     //find user by email
-    const user = await this.prisma.user.findUnique({
-      where: {
-        email: dto.email,
-      },
-    });
+    const user = await this.userModel.findOne({ email: dto.email });
     // if user doesn't exist throw exception
     if (!user) throw new ForbiddenException('Credentials incorrect');
 
@@ -53,11 +49,11 @@ export class AuthService {
     //if password incorrect throw exception
     if (!pwMatches) throw new ForbiddenException('Credentials incorrect');
 
-    return this.signToken(user.id, user.email);
+    return this.signToken(user._id.toString(), user.email);
   }
 
   async signToken(
-    userId: number,
+    userId: string,
     email: string,
   ): Promise<{ access_token: string }> {
     const payload = {

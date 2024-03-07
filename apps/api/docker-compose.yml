@@ -1,5 +1,20 @@
 version: '3.8'
 services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: rootName
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: article_db
+      MONGO_INITDB_ROOT_ROLE: readWrite
+    command: mongod --bind_ip_all
+    ports:
+      - '27017:27017'
+      - '27018:27017'
+    volumes:
+      - mongodb_data:/data/db
   dev-db:
     image: postgres:13
     ports:
@@ -22,3 +37,5 @@ services:
       - freecodecamp
 networks:
   freecodecamp:
+volumes:
+  mongodb_data: {}

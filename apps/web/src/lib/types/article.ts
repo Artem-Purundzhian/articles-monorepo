@@ -1,5 +1,5 @@
 export interface Article {
-  id: number;
+  _id: string;
   createdAt: Date;
   updatedAt: Date;
   published: Date;

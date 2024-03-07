@@ -1,8 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { parse } from 'date-fns';
+import { Model } from 'mongoose';
 import { CreateArticleDto } from 'src/article/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Article } from 'src/schemas/article.schema';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Parser = require('rss-parser');
@@ -11,7 +13,9 @@ const parser = new Parser();
 
 @Injectable()
 export class RssService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @InjectModel(Article.name) private articleModel: Model<Article>,
+  ) {}
 
   private readonly logger = new Logger(RssService.name);
 
@@ -56,17 +60,14 @@ export class RssService {
   }
 
   async createArticle(dto: CreateArticleDto) {
-    const article = await this.prisma.article.upsert({
-      where: {
-        link: dto.link,
-      },
-      create: {
-        ...dto,
-      },
-      update: {},
-    });
+    const existingArticle = await this.articleModel.findOne({ link: dto.link });
 
-    return article;
+    if (existingArticle) {
+      return existingArticle;
+    }
+
+    const article = new this.articleModel(dto);
+    return article.save();
   }
 
   // @Cron(CronExpression.EVERY_10_SECONDS)

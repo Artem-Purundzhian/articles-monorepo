@@ -19,7 +19,7 @@ const ArticlesList: FC<ArticleListProps> = async ({ query, currentPage }) => {
       <Suspense key={query + currentPage} fallback={<div></div>}>
         <div className="flex flex-col gap-2 pt-0">
           {articles.map((article) => (
-            <ArticleCard key={article.id} article={article} />
+            <ArticleCard key={article._id} article={article} />
           ))}
         </div>
       </Suspense>

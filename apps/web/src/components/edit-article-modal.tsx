@@ -49,7 +49,7 @@ function EditArticleModal({ article, token }: ModalProps) {
   async function createArticle(data: TArticleValidator) {
     try {
       const response = await fetch(
-        `http://localhost:3333/articles/${article.id}`,
+        `http://localhost:3333/articles/${article._id}`,
         {
           method: "PATCH",
           headers: {
